@@ -50,8 +50,8 @@
     <div class="detail-cell-value">{{ trade.exit_date.strftime('%b %d, %Y') if trade.exit_date else '—' }}</div>
   </div>
   <div class="detail-cell">
-    <div class="detail-cell-label">Position Size</div>
-    <div class="detail-cell-value">{{ '$%.0f' | format(trade.position_size) if trade.position_size else '—' }}</div>
+    <div class="detail-cell-label">Stop Limit</div>
+    <div class="detail-cell-value">{{ '$%.0f' | format(trade.stop_limit) if trade.stop_limit else '—' }}</div>
   </div>
   <div class="detail-cell">
     <div class="detail-cell-label">Sector</div>
