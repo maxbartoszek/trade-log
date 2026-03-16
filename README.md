@@ -57,6 +57,16 @@ trade_journal/
 ```
 
 ---
+## Running Locally (Recommended)
+1. Clone the repo
+2. Install the necessary dependencies
+ (bashpip install -r requirements.txt)
+3. Start the app
+ (bashpython app.py)
+
+Visit http://localhost:5000, register an account, and start logging trades. Running locally uses SQLite automatically meaning there is no database setup needed.
+
+---
 
 ## Acknowledgement
 
