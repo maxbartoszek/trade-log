@@ -55,4 +55,4 @@ trade_journal/
 
 ## Acknowledgement
 
-Created using Claude for assistance specifically in: frontend development, storing data, authorizing user profiles, and cleaning up code tremendously. 
+Created using Claude for assistance specifically in: frontend development, storing data, authorizing user profiles, and cleaning up code tremendously. Definitely would not be able to do this project without it.
