@@ -6,6 +6,7 @@ Built as a personal analytics tool for investment decision improvement.
 In coffee chats with employees at funds and AM firms, I've found that I'm always told to do one thing: track your trades. At first, I tried doing it in a paper journal, and then a Google Doc, but neither clicked for me. That's when I started looking for apps that I could use instead. However, the two big ones, TradeSync and Edgebonk, cost A LOT of money to use. As such, I decided to create my own. 
 
 Site: https://trade-log.onrender.com
+
 The server automatically shuts down after 15 minutes of inactivity. If the app hasn't been visited recently, the first load may take 20–30 seconds while the server wakes up. This is completely normal. Just wait a moment and the page will load.
 
 ---
