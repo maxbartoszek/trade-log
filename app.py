@@ -113,7 +113,7 @@ def add_trade():
             position_type=pos,
             entry_price=entry,
             exit_price=exit_p,
-            position_size=float(f.get('position_size', 0)) if f.get('position_size') else None,
+            stop_limit=float(f.get('stop_limit', 0)) if f.get('stop_limit') else None,
             entry_date=datetime.strptime(f.get('entry_date'), '%Y-%m-%d').date() if f.get('entry_date') else None,
             exit_date=datetime.strptime(f.get('exit_date'), '%Y-%m-%d').date() if f.get('exit_date') else None,
             return_pct=return_pct,
@@ -157,7 +157,7 @@ def edit_trade(trade_id):
         trade.position_type = f.get('position_type', 'long')
         trade.entry_price = float(f.get('entry_price', 0))
         trade.exit_price = float(f.get('exit_price', 0)) if f.get('exit_price') else None
-        trade.position_size = float(f.get('position_size', 0)) if f.get('position_size') else None
+        trade.stop_limit = float(f.get('stop_limit', 0)) if f.get('stop_limit') else None
         trade.entry_date = datetime.strptime(f.get('entry_date'), '%Y-%m-%d').date() if f.get('entry_date') else None
         trade.exit_date = datetime.strptime(f.get('exit_date'), '%Y-%m-%d').date() if f.get('exit_date') else None
         trade.status = f.get('status', 'open')
