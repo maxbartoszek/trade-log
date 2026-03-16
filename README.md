@@ -57,6 +57,14 @@ trade_journal/
 ```
 
 ---
+## Running Locally (Recommended)
+1. Clone the repo
+2. Install the correct dependencies
+bashpip install -r requirements.txt
+3. Start the app
+bashpython app.py
+
+Visit http://localhost:5000, register an account, and start logging trades. Runny locally uses SQLite automatically, meaning there's no database setup needed.
 
 ## Acknowledgement
 
