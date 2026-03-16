@@ -40,20 +40,20 @@ The server automatically shuts down after 15 minutes of inactivity. If the app h
 
 ```
 trade_journal/
-├── app.py                  # Flask application, routes, and API endpoints
-├── models.py               # SQLAlchemy database models
-├── requirements.txt        # Python dependencies
-├── Procfile                # Render/Gunicorn start command
+├── app.py                  
+├── models.py               
+├── requirements.txt
+├── Procfile                
 ├── static/
 │   └── favicon.svg
 └── templates/
-    ├── base.html           # Base layout, global styles, theme toggle
+    ├── base.html           
     ├── login.html
     ├── register.html
-    ├── dashboard.html      # Infinite scroll trade list with filter
-    ├── add_trade.html      # New trade form
-    ├── edit_trade.html     # Edit existing trade
-    └── trade_detail.html   # Full trade view with all notes
+    ├── dashboard.html      
+    ├── add_trade.html      
+    ├── edit_trade.html     
+    └── trade_detail.html   
 ```
 
 ---
