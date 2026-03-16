@@ -2,7 +2,7 @@
 
 A trade journal to systematically log any investment you made, track performance, and document investment theses. 
 
-Every coffee chat I've ever had with employees at funds and AM firms end with the same advice: track your trades. I tried a paper journal first, then a Google Doc, but neither really stuck with me. So I went looking for an app instead, and quickly found out that the two big options (TradeSync and Edgebonk) cost A LOT of money. 
+Every coffee chat I've ever had with employees at funds and AM firms end with the same advice: track your trades. I tried a paper journal first, then a Google Doc, but neither really stuck with me. So I went looking for an app instead, and quickly found out that the two main options (TradeSync and Edgebonk) cost A LOT of money. 
 
 So I just built my own.
 
@@ -15,7 +15,7 @@ Although free, Trade Log has enough storage to keep 250,000 logs across all acco
 ---
 
 ## Features
-- Trade Logging: Record entry/exit prices, position size, dates, sector, and strategy for every trade
+- Trade Logging: Record entry/exit prices, stop limits, dates, sector, and strategy for every trade
 - Investment thesis tracking: Document your thesis, expected catalysts, and risk factors before entering a trade
 - Post-trade review: Reflect on what went right, what went wrong, and what you learned after closing
 - A Performance dashboard: Win rate, average return, wins/losses, and open position count
@@ -35,7 +35,6 @@ Although free, Trade Log has enough storage to keep 250,000 logs across all acco
 | Database (prod) | PostgreSQL via Neon |
 | Database (local) | SQLite |
 | Hosting | Render |
-| Fonts | Space Mono, DM Sans |
 ---
 
 ## Project structure
@@ -72,4 +71,4 @@ Visit http://localhost:5000, register an account, and start logging trades. Runn
 
 ## Acknowledgement
 
-Created using Claude for assistance specifically in: frontend development, storing data, authorizing user profiles, and cleaning up code tremendously. Definitely would not have been able to do this project without it.
+Created using Claude. Specifically used in: frontend development, storing data, authorizing user profiles, and cleaning up a tremendous amount of code. Definitely would not have been able to do this project without it.
