@@ -2,7 +2,9 @@
 
 A trade journal to systematically log any investment you made, track performance, and document investment theses. 
 
-In coffee chats with employees at funds and AM firms, I've found that I'm always told to do one thing: track your trades. At first, I tried doing it in a paper journal, and then a Google Doc, but neither clicked for me. That's when I started looking for apps that I could use instead. However, the two big ones, TradeSync and Edgebonk, cost A LOT of money to use. As such, I decided to create my own. 
+Every coffee chat I've ever had with employees at funds and AM firms end the same way: track your trades. I tried a paper journal first, then a Google Doc, but neither really stuck with me. So I went looking for an app instead, and quickly found out that the two big options (TradeSync and Edgebonk) cost A LOT of money. 
+
+So I just built my own.
 
 Site: https://trade-log.onrender.com
 
