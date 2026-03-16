@@ -24,6 +24,15 @@ db.init_app(app)
 
 with app.app_context():
     db.create_all()
+    # One-time migration: rename position_size to stop_limit if it still exists
+    with db.engine.connect() as conn:
+        try:
+            conn.execute(db.text(
+                'ALTER TABLE trades RENAME COLUMN position_size TO stop_limit'
+            ))
+            conn.commit()
+        except Exception:
+            pass  # Column already renamed or doesn't exist — safe to ignore
 
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
