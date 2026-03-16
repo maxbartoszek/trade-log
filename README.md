@@ -5,6 +5,8 @@ Built as a personal analytics tool for investment decision improvement.
 
 In coffee chats with employees at funds and AM firms, I've found that I'm always told to do one thing: track your trades. At first, I tried doing it in a paper journal, and then a Google Doc, but neither clicked for me. That's when I started looking for apps that I could use instead. However, the two big ones, TradeSync and Edgebonk, cost A LOT of money to use. As such, I decided to create my own. 
 
+https://trade-log.onrender.com
+
 ---
 
 ## Features
