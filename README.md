@@ -8,7 +8,7 @@ So I just built my own.
 
 Site: https://trade-log.onrender.com
 
-The server automatically shuts down after 15 minutes of inactivity. If the app hasn't been visited recently, the first load may take 20–30 seconds while the server wakes up. This is completely normal. Just wait a moment and the page will load.
+The server automatically shuts down after 15 minutes of inactivity. If the app hasn't been visited recently, the first load may take around a minute while the server wakes up. This is completely normal. Just wait and the page will load.
 
 Although free, Trade Log has enough storage to keep 250,000 logs across all accounts so don't worry too much about the site collapsing. If you want more security, I'd recommend running it locally (more on that below).
 
