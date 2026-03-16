@@ -19,27 +19,16 @@ In coffee chats with employees at funds and AM firms, I've found that I'm always
 ---
 ## Tech Stack
 
-\usepackage{booktabs} % add to preamble
-
-\begin{table}[h]
-\centering
-\begin{tabular}{ll}
-\toprule
-\textbf{Layer} & \textbf{Technology} \\
-\midrule
-Backend & Python, Flask \\
-Database ORM & SQLAlchemy \\
-Authentication & Flask-Login, Flask-Bcrypt \\
-Frontend & Jinja2, Vanilla JS, CSS Variables \\
-Database (prod) & PostgreSQL via Neon \\
-Database (local) & SQLite \\
-Hosting & Render \\
-Fonts & Space Mono, DM Sans \\
-\bottomrule
-\end{tabular}
-\caption{Tech Stack}
-\end{table}
-
+| Layer | Technology |
+|---|---|
+| Backend | Python, Flask |
+| Database ORM | SQLAlchemy |
+| Authentication | Flask-Login, Flask-Bcrypt |
+| Frontend | Jinja2, Vanilla JS, CSS Variables |
+| Database (prod) | PostgreSQL via Neon |
+| Database (local) | SQLite |
+| Hosting | Render |
+| Fonts | Space Mono, DM Sans |
 ---
 
 ## Project structure
