@@ -19,7 +19,7 @@ The server automatically shuts down after 15 minutes of inactivity. If the app h
 - A Performance dashboard: Win rate, average return, wins/losses, and open position count
 - Open positions filter: One click to isolate all currently open trades
 - Light / dark mode: Toggle between themes with your preference saved across sessions
-- Secure authentication — Per-user accounts with bcrypt password hashing
+- Secure authentication: Personal accounts with bcrypt password hashing
 
 ---
 ## Tech Stack
