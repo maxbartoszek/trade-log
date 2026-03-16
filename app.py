@@ -61,7 +61,9 @@ def api_trades():
     query = Trade.query.filter_by(user_id=current_user.id)
     if filter_open:
         query = query.filter_by(status='open')
-    query = query.order_by(Trade.created_at.desc())
+    query = query.order_by(
+        db.func.coalesce(Trade.exit_date, Trade.entry_date).desc().nullslast()
+    )
 
     total = query.count()
     trades = query.offset((page - 1) * PAGE_SIZE).limit(PAGE_SIZE).all()
