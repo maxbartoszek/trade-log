@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div style="margin-bottom:1.5rem">
+  <a href="{{ url_for('dashboard') }}" class="btn btn-ghost" style="font-size:11px">← Back</a>
+</div>
+
+<div class="detail-header">
+  <div>
+    <div class="detail-ticker">{{ trade.ticker }}</div>
+    <div style="margin-top:6px;display:flex;gap:8px;align-items:center">
+      <span class="trade-side side-{{ trade.position_type }}">{{ trade.position_type | upper }}</span>
+      <span class="badge badge-{{ trade.status }}">{{ trade.status | upper }}</span>
+      {% if trade.strategy %}<span style="font-family:var(--mono);font-size:11px;color:var(--text-dim)">{{ trade.strategy }}</span>{% endif %}
+    </div>
+  </div>
+  <div style="margin-left:auto;text-align:right">
+    {% if trade.return_pct is not none %}
+    <div class="detail-return {% if trade.return_pct >= 0 %}up{% else %}down{% endif %}">
+      {{ '+' if trade.return_pct >= 0 else '' }}{{ trade.return_pct }}%
+    </div>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--text-dim);margin-top:4px">RETURN</div>
+    {% else %}
+    <div class="detail-return" style="color:var(--yellow)">OPEN</div>
+    {% endif %}
+  </div>
+  <div class="action-row">
+    <a href="{{ url_for('edit_trade', trade_id=trade.id) }}" class="btn btn-ghost">Edit</a>
+    <form method="POST" action="{{ url_for('delete_trade', trade_id=trade.id) }}" onsubmit="return confirm('Delete this trade?')">
+      <button type="submit" class="btn btn-danger">Delete</button>
+    </form>
+  </div>
+</div>
+
+<div class="detail-grid">
+  <div class="detail-cell">
+    <div class="detail-cell-label">Entry Price</div>
+    <div class="detail-cell-value">${{ '%.2f' | format(trade.entry_price) }}</div>
+  </div>
+  <div class="detail-cell">
+    <div class="detail-cell-label">Exit Price</div>
+    <div class="detail-cell-value">{{ '$%.2f' | format(trade.exit_price) if trade.exit_price else '—' }}</div>
+  </div>
+  <div class="detail-cell">
+    <div class="detail-cell-label">Entry Date</div>
+    <div class="detail-cell-value">{{ trade.entry_date.strftime('%b %d, %Y') if trade.entry_date else '—' }}</div>
+  </div>
+  <div class="detail-cell">
+    <div class="detail-cell-label">Exit Date</div>
+    <div class="detail-cell-value">{{ trade.exit_date.strftime('%b %d, %Y') if trade.exit_date else '—' }}</div>
+  </div>
+  <div class="detail-cell">
+    <div class="detail-cell-label">Position Size</div>
+    <div class="detail-cell-value">{{ '$%.0f' | format(trade.position_size) if trade.position_size else '—' }}</div>
+  </div>
+  <div class="detail-cell">
+    <div class="detail-cell-label">Sector</div>
+    <div class="detail-cell-value">{{ trade.sector if trade.sector else '—' }}</div>
+  </div>
+</div>
+
+{% if trade.notes %}
+{% set n = trade.notes %}
+
+{% if n.confidence_level %}
+<div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem;padding:1rem 1.4rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px;">
+  <span style="font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-dim)">Confidence</span>
+  <div class="confidence-display">
+    {% for i in range(1, 11) %}
+    <div class="conf-dot {% if i <= n.confidence_level %}filled{% endif %}"></div>
+    {% endfor %}
+  </div>
+  <span style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--accent)">{{ n.confidence_level }}/10</span>
+</div>
+{% endif %}
+
+{% if n.thesis %}
+<div class="note-section">
+  <div class="note-section-title">Investment Thesis</div>
+  <div class="note-text">{{ n.thesis }}</div>
+</div>
+{% endif %}
+
+{% if n.catalyst %}
+<div class="note-section">
+  <div class="note-section-title">Catalyst</div>
+  <div class="note-text">{{ n.catalyst }}</div>
+</div>
+{% endif %}
+
+{% if n.risk_factors %}
+<div class="note-section">
+  <div class="note-section-title">Risk Factors</div>
+  <div class="note-text">{{ n.risk_factors }}</div>
+</div>
+{% endif %}
+
+{% if n.post_trade_review %}
+<div class="note-section" style="border-color:var(--border2)">
+  <div class="note-section-title" style="color:var(--yellow)">Post-Trade Review</div>
+  <div class="note-text">{{ n.post_trade_review }}</div>
+</div>
+{% endif %}
+
+{% if n.mistakes %}
+<div class="note-section" style="border-color:rgba(255,77,106,0.2)">
+  <div class="note-section-title" style="color:var(--red)">Mistakes</div>
+  <div class="note-text">{{ n.mistakes }}</div>
+</div>
+{% endif %}
+
+{% if n.lessons %}
+<div class="note-section" style="border-color:rgba(0,229,160,0.2)">
+  <div class="note-section-title">Lessons Learned</div>
+  <div class="note-text">{{ n.lessons }}</div>
+</div>
+{% endif %}
+
+{% endif %}
+
+<div style="margin-top:2rem;font-family:var(--mono);font-size:10px;color:var(--text-dim)">
+  Logged {{ trade.created_at.strftime('%b %d, %Y at %H:%M') }}
+</div>
+
+{% endblock %}
