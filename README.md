@@ -66,6 +66,8 @@ trade_journal/
 
 Visit http://localhost:5000, register an account, and start logging trades. Runny locally uses SQLite automatically, meaning there's no database setup needed.
 
+---
+
 ## Acknowledgement
 
 Created using Claude for assistance specifically in: frontend development, storing data, authorizing user profiles, and cleaning up code tremendously. Definitely would not have been able to do this project without it.
