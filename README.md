@@ -1,6 +1,8 @@
-# TradeLog — Personal Trade Journal
+# TradeLog: A Personal Trade Journal
 
-A self-hosted trade journal for systematic trade logging, performance tracking, and investment thesis documentation.
+A trade journal for logging stock trades, tracking performance, and documenting investment theses.
+
+Developed with Claude.
 
 ## Features
 - Secure multi-user authentication
