@@ -21,7 +21,7 @@ class Trade(db.Model):
     position_type = db.Column(db.String(10), nullable=False, default='long')
     entry_price = db.Column(db.Float, nullable=False)
     exit_price = db.Column(db.Float)
-    position_size = db.Column(db.Float)
+    stop_limit = db.Column(db.Float)
     entry_date = db.Column(db.Date)
     exit_date = db.Column(db.Date)
     return_pct = db.Column(db.Float)
