@@ -41,6 +41,8 @@ trade_journal/
 ├── models.py               # SQLAlchemy database models
 ├── requirements.txt        # Python dependencies
 ├── Procfile                # Render/Gunicorn start command
+├── static/
+│   └── favicon.svg
 └── templates/
     ├── base.html           # Base layout, global styles, theme toggle
     ├── login.html
