@@ -1,0 +1,348 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+  <div>
+    <div class="page-title">Analytics</div>
+    <div class="page-subtitle">Performance breakdown across all closed trades</div>
+  </div>
+</div>
+
+{% if empty %}
+<div class="empty-state">
+  <div class="empty-state-icon">◈</div>
+  <div class="empty-state-title">No closed trades yet</div>
+  <p style="font-size:13px;margin-bottom:1.5rem">Analytics will appear once you have closed trades with returns recorded.</p>
+  <a href="{{ url_for('add_trade') }}" class="btn btn-accent">Log a Trade</a>
+</div>
+
+{% else %}
+
+<!-- Top stat strip -->
+<div class="stats-row" style="margin-bottom:2rem">
+  <div class="stat-card">
+    <div class="stat-label">Closed Trades</div>
+    <div class="stat-value">{{ total_closed }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Avg Hold Time</div>
+    <div class="stat-value">{{ avg_hold if avg_hold is not none else '—' }}<span style="font-size:13px;color:var(--text-dim)"> days</span></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Best Trade</div>
+    <div class="stat-value up">+{{ best.return_pct }}%</div>
+    <div style="font-family:var(--mono);font-size:10px;color:var(--text-dim);margin-top:2px">{{ best.ticker }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Worst Trade</div>
+    <div class="stat-value down">{{ best.return_pct if worst.return_pct > 0 else '' }}{{ worst.return_pct }}%</div>
+    <div style="font-family:var(--mono);font-size:10px;color:var(--text-dim);margin-top:2px">{{ worst.ticker }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Strategies Tracked</div>
+    <div class="stat-value">{{ strategies | length }}</div>
+  </div>
+</div>
+
+<!-- Cumulative P&L Chart -->
+<div class="analytics-card" style="margin-bottom:1.5rem">
+  <div class="analytics-card-title">Cumulative Return (%)</div>
+  <div style="position:relative;height:260px">
+    <canvas id="cumulativeChart"></canvas>
+  </div>
+</div>
+
+<!-- Monthly Returns Chart -->
+{% if monthly | length > 1 %}
+<div class="analytics-card" style="margin-bottom:1.5rem">
+  <div class="analytics-card-title">Avg Return by Month (%)</div>
+  <div style="position:relative;height:220px">
+    <canvas id="monthlyChart"></canvas>
+  </div>
+</div>
+{% endif %}
+
+<!-- Strategy + Sector row -->
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem">
+
+  <!-- Strategy breakdown -->
+  <div class="analytics-card">
+    <div class="analytics-card-title">Win Rate by Strategy</div>
+    {% if strategies %}
+    <table class="analytics-table">
+      <thead>
+        <tr>
+          <th>Strategy</th>
+          <th>Trades</th>
+          <th>Win Rate</th>
+          <th>Avg Return</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in strategies %}
+        <tr>
+          <td>{{ s.name }}</td>
+          <td style="color:var(--text-dim)">{{ s.count }}</td>
+          <td>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="mini-bar-track">
+                <div class="mini-bar" style="width:{{ s.win_rate }}%;background:{% if s.win_rate >= 50 %}var(--accent){% else %}var(--red){% endif %}"></div>
+              </div>
+              <span style="font-family:var(--mono);font-size:12px;color:{% if s.win_rate >= 50 %}var(--accent){% else %}var(--red){% endif %}">{{ s.win_rate }}%</span>
+            </div>
+          </td>
+          <td class="{% if s.avg_return >= 0 %}cell-up{% else %}cell-down{% endif %}">
+            {{ '+' if s.avg_return >= 0 else '' }}{{ s.avg_return }}%
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div style="color:var(--text-dim);font-size:13px;padding:1rem 0">No strategy tags on closed trades yet.</div>
+    {% endif %}
+  </div>
+
+  <!-- Sector breakdown -->
+  <div class="analytics-card">
+    <div class="analytics-card-title">Performance by Sector</div>
+    {% if sectors %}
+    <table class="analytics-table">
+      <thead>
+        <tr>
+          <th>Sector</th>
+          <th>Trades</th>
+          <th>Win Rate</th>
+          <th>Avg Return</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in sectors %}
+        <tr>
+          <td>{{ s.name }}</td>
+          <td style="color:var(--text-dim)">{{ s.count }}</td>
+          <td>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="mini-bar-track">
+                <div class="mini-bar" style="width:{{ s.win_rate }}%;background:{% if s.win_rate >= 50 %}var(--accent){% else %}var(--red){% endif %}"></div>
+              </div>
+              <span style="font-family:var(--mono);font-size:12px;color:{% if s.win_rate >= 50 %}var(--accent){% else %}var(--red){% endif %}">{{ s.win_rate }}%</span>
+            </div>
+          </td>
+          <td class="{% if s.avg_return >= 0 %}cell-up{% else %}cell-down{% endif %}">
+            {{ '+' if s.avg_return >= 0 else '' }}{{ s.avg_return }}%
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div style="color:var(--text-dim);font-size:13px;padding:1rem 0">No sector tags on closed trades yet.</div>
+    {% endif %}
+  </div>
+
+</div>
+
+<!-- Long vs Short -->
+{% if long_stats or short_stats %}
+<div class="analytics-card" style="margin-bottom:1.5rem">
+  <div class="analytics-card-title">Long vs Short Breakdown</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border-radius:6px;overflow:hidden;margin-top:0.5rem">
+    {% for label, s in [('Long', long_stats), ('Short', short_stats)] %}
+    {% if s %}
+    <div style="background:var(--bg3);padding:1.2rem 1.5rem">
+      <div style="font-family:var(--mono);font-size:11px;letter-spacing:0.1em;color:var(--text-dim);text-transform:uppercase;margin-bottom:0.75rem">{{ label }}</div>
+      <div style="display:flex;gap:2rem">
+        <div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--text-dim);margin-bottom:3px">TRADES</div>
+          <div style="font-family:var(--mono);font-size:20px;font-weight:700;color:var(--text-bright)">{{ s.count }}</div>
+        </div>
+        <div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--text-dim);margin-bottom:3px">WIN RATE</div>
+          <div style="font-family:var(--mono);font-size:20px;font-weight:700;color:{% if s.win_rate >= 50 %}var(--accent){% else %}var(--red){% endif %}">{{ s.win_rate }}%</div>
+        </div>
+        <div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--text-dim);margin-bottom:3px">AVG RETURN</div>
+          <div style="font-family:var(--mono);font-size:20px;font-weight:700;color:{% if s.avg_return >= 0 %}var(--accent){% else %}var(--red){% endif %}">{{ '+' if s.avg_return >= 0 else '' }}{{ s.avg_return }}%</div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+{% endif %}
+
+<style>
+  .analytics-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+  .analytics-card-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.25rem;
+  }
+  .analytics-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .analytics-table th {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-align: left;
+    padding: 0 0 0.75rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .analytics-table td {
+    padding: 0.65rem 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+  .analytics-table tr:last-child td { border-bottom: none; }
+  .cell-up { color: var(--accent) !important; }
+  .cell-down { color: var(--red) !important; }
+  .mini-bar-track {
+    width: 60px;
+    height: 4px;
+    background: var(--border2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .mini-bar {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.6s ease;
+  }
+  @media (max-width: 768px) {
+    .analytics-two-col { grid-template-columns: 1fr !important; }
+  }
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+  const isDark = !document.documentElement.classList.contains('light');
+  const gridColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)';
+  const textColor = isDark ? '#8a96b0' : '#4a5570';
+  const accentColor = isDark ? '#00e5a0' : '#00a870';
+  const redColor = isDark ? '#ff4d6a' : '#d93050';
+
+  Chart.defaults.font.family = "'Space Mono', monospace";
+  Chart.defaults.font.size = 11;
+  Chart.defaults.color = textColor;
+
+  // Cumulative P&L
+  const cumData = {{ cumulative | tojson }};
+  const cumCtx = document.getElementById('cumulativeChart').getContext('2d');
+
+  const gradient = cumCtx.createLinearGradient(0, 0, 0, 260);
+  gradient.addColorStop(0, isDark ? 'rgba(0,229,160,0.18)' : 'rgba(0,168,112,0.15)');
+  gradient.addColorStop(1, 'rgba(0,0,0,0)');
+
+  new Chart(cumCtx, {
+    type: 'line',
+    data: {
+      labels: cumData.map(d => d.date),
+      datasets: [{
+        data: cumData.map(d => d.value),
+        borderColor: accentColor,
+        borderWidth: 2,
+        backgroundColor: gradient,
+        fill: true,
+        tension: 0.3,
+        pointRadius: cumData.length > 30 ? 0 : 4,
+        pointHoverRadius: 6,
+        pointBackgroundColor: accentColor,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { intersect: false, mode: 'index' },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: isDark ? '#181c24' : '#ffffff',
+          borderColor: isDark ? '#2a3040' : '#d4d9e8',
+          borderWidth: 1,
+          titleColor: textColor,
+          bodyColor: accentColor,
+          padding: 10,
+          callbacks: {
+            label: ctx => (ctx.raw >= 0 ? '+' : '') + ctx.raw + '%'
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: gridColor },
+          ticks: { maxTicksLimit: 8, maxRotation: 0 }
+        },
+        y: {
+          grid: { color: gridColor },
+          ticks: { callback: v => (v >= 0 ? '+' : '') + v + '%' }
+        }
+      }
+    }
+  });
+
+  // Monthly Returns
+  {% if monthly | length > 1 %}
+  const monthData = {{ monthly | tojson }};
+  new Chart(document.getElementById('monthlyChart').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: monthData.map(d => d.month),
+      datasets: [{
+        data: monthData.map(d => d.avg),
+        backgroundColor: monthData.map(d => d.avg >= 0
+          ? (isDark ? 'rgba(0,229,160,0.7)' : 'rgba(0,168,112,0.7)')
+          : (isDark ? 'rgba(255,77,106,0.7)' : 'rgba(217,48,80,0.7)')
+        ),
+        borderRadius: 4,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: isDark ? '#181c24' : '#ffffff',
+          borderColor: isDark ? '#2a3040' : '#d4d9e8',
+          borderWidth: 1,
+          titleColor: textColor,
+          bodyColor: textColor,
+          padding: 10,
+          callbacks: {
+            label: ctx => 'Avg: ' + (ctx.raw >= 0 ? '+' : '') + ctx.raw + '%'
+          }
+        }
+      },
+      scales: {
+        x: { grid: { display: false } },
+        y: {
+          grid: { color: gridColor },
+          ticks: { callback: v => (v >= 0 ? '+' : '') + v + '%' }
+        }
+      }
+    }
+  });
+  {% endif %}
+</script>
+
+{% endblock %}
