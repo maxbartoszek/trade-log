@@ -322,6 +322,56 @@ def analytics():
         monthly=monthly_data,
     )
 
+
+@app.route('/export/csv')
+@login_required
+def export_csv():
+    import csv
+    import io
+    trades = Trade.query.filter_by(user_id=current_user.id).order_by(Trade.created_at.desc()).all()
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+
+    writer.writerow([
+        'Ticker', 'Position', 'Status', 'Entry Price', 'Exit Price',
+        'Entry Date', 'Exit Date', 'Return %', 'Stop Limit',
+        'Sector', 'Strategy', 'Confidence',
+        'Thesis', 'Catalyst', 'Risk Factors',
+        'Post-Trade Review', 'Mistakes', 'Lessons'
+    ])
+
+    for t in trades:
+        n = t.notes
+        writer.writerow([
+            t.ticker,
+            t.position_type,
+            t.status,
+            t.entry_price,
+            t.exit_price or '',
+            t.entry_date.strftime('%Y-%m-%d') if t.entry_date else '',
+            t.exit_date.strftime('%Y-%m-%d') if t.exit_date else '',
+            t.return_pct if t.return_pct is not None else '',
+            t.stop_limit or '',
+            t.sector or '',
+            t.strategy or '',
+            n.confidence_level if n else '',
+            n.thesis or '' if n else '',
+            n.catalyst or '' if n else '',
+            n.risk_factors or '' if n else '',
+            n.post_trade_review or '' if n else '',
+            n.mistakes or '' if n else '',
+            n.lessons or '' if n else '',
+        ])
+
+    from flask import Response
+    output.seek(0)
+    return Response(
+        output.getvalue(),
+        mimetype='text/csv',
+        headers={'Content-Disposition': 'attachment; filename=tradelog_export.csv'}
+    )
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
