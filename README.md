@@ -15,14 +15,14 @@ Although free, Trade Log has enough storage to keep 250,000 logs across all acco
 ---
 
 ## Features
-- Trade Logging: Record entry/exit prices, stop limits, dates, sector, and strategy for every trade
-- Investment thesis tracking: Document your thesis, expected catalysts, and risk factors before entering a trade
-- Post-trade review: Reflect on what went right, what went wrong, and what you learned after closing
-- A Performance dashboard: Win rate, average return, wins/losses, and open position count
-- Analytical Dashboard: Displays more detailed metrics than Performance Dashboard (avg hold time, cumulative return, avg monthly returns, win rate by strategy, performance by sector, long vs short performance, etc.)
-- Open positions filter: One click to isolate all currently open trades
-- Light / dark mode: Toggle between themes with your preference saved across sessions
-- Secure authentication: Personal accounts with bcrypt password hashing
+- **Trade logging:** Record entry/exit prices, stop limits, dates, sector, and strategy for every trade
+- **Investment thesis tracking:** Document your thesis, expected catalysts, and risk factors before entering a trade
+- **Post-trade review:** Reflect on what went right, what went wrong, and what you learned after closing
+- **Performance dashboard:** Win rate, average return, wins/losses, and open position count
+- **Analytical dashboard:** Displays more detailed metrics than Performance Dashboard (avg hold time, cumulative return, avg monthly returns, win rate by strategy, performance by sector, long vs short performance, etc.)
+- **Open positions filter:** One click to isolate all currently open trades
+- **Light / dark mode:** Toggle between themes with your preference saved across sessions
+- **Secure authentication:** Personal accounts with bcrypt password hashing
 
 ---
 ## Tech Stack
