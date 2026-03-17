@@ -6,7 +6,10 @@
     <div class="page-title">Trade Journal</div>
     <div class="page-subtitle" id="trade-count-label">Loading trades...</div>
   </div>
-  <a href="{{ url_for('add_trade') }}" class="btn btn-accent">+ Log Trade</a>
+  <div style="display:flex;gap:0.75rem">
+    <a href="{{ url_for('export_csv') }}" class="btn btn-ghost">↓ Export CSV</a>
+    <a href="{{ url_for('add_trade') }}" class="btn btn-accent">+ Log Trade</a>
+  </div>
 </div>
 
 <div class="stats-row">
