@@ -218,7 +218,7 @@ def analytics():
         return render_template('analytics.html', empty=True)
 
     # --- Cumulative P&L ---
-    sorted_trades = sorted(closed, key=lambda t: t.exit_date or t.entry_date)
+    sorted_trades = sorted(closed, key=lambda t: t.exit_date or t.entry_date or datetime.min.date())
     cumulative = []
     running = 0
     for t in sorted_trades:
