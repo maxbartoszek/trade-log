@@ -223,8 +223,9 @@ def analytics():
     running = 0
     for t in sorted_trades:
         running += t.return_pct
+        date = t.exit_date or t.entry_date
         cumulative.append({
-            'date': (t.exit_date or t.entry_date).strftime('%b %d, %Y'),
+            'date': date.strftime('%b %d, %Y') if date else 'Unknown',
             'value': round(running, 2),
             'ticker': t.ticker,
         })
@@ -292,6 +293,8 @@ def analytics():
     monthly = defaultdict(list)
     for t in closed:
         date = t.exit_date or t.entry_date
+        if not date:
+            continue
         key = date.strftime('%b %Y')
         monthly[key].append(t.return_pct)
     monthly_data = []
