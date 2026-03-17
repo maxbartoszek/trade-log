@@ -42,19 +42,25 @@ Although free, Trade Log has enough storage to keep 250,000 logs across all acco
 
 ```
 trade_journal/
-├── app.py                  
+├── app.py
+├── instance             
 ├── models.py               
 ├── requirements.txt
-├── Procfile                
+├── Procfile
+├── __pycache__
+├── README.md                
+├── render.yaml
+├── requirements.txt
 ├── static/
 │   └── favicon.svg
 └── templates/
-    ├── base.html           
-    ├── login.html
-    ├── register.html
-    ├── dashboard.html      
-    ├── add_trade.html      
+    ├── add_trade.html
+    ├── analytics.html
+    ├── base.html
+    ├── dashboard.html       
     ├── edit_trade.html     
+    ├── login.html
+    ├── register.html            
     └── trade_detail.html   
 ```
 
