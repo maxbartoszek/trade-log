@@ -35,7 +35,7 @@
   </div>
   <div class="stat-card">
     <div class="stat-label">Worst Trade</div>
-    <div class="stat-value down">{{ best.return_pct if worst.return_pct > 0 else '' }}{{ worst.return_pct }}%</div>
+    <div class="stat-value {% if worst.return_pct >= 0 %}up{% else %}down{% endif %}">{{ '+' if worst.return_pct >= 0 else '' }}{{ worst.return_pct }}%</div>
     <div style="font-family:var(--mono);font-size:10px;color:var(--text-dim);margin-top:2px">{{ worst.ticker }}</div>
   </div>
   <div class="stat-card">
