@@ -206,6 +206,116 @@ def delete_trade(trade_id):
     flash('Trade deleted.', 'info')
     return redirect(url_for('dashboard'))
 
+
+@app.route('/analytics')
+@login_required
+def analytics():
+    from collections import defaultdict
+    trades = Trade.query.filter_by(user_id=current_user.id).all()
+    closed = [t for t in trades if t.status == 'closed' and t.return_pct is not None]
+
+    if not closed:
+        return render_template('analytics.html', empty=True)
+
+    # --- Cumulative P&L ---
+    sorted_trades = sorted(closed, key=lambda t: t.exit_date or t.entry_date)
+    cumulative = []
+    running = 0
+    for t in sorted_trades:
+        running += t.return_pct
+        cumulative.append({
+            'date': (t.exit_date or t.entry_date).strftime('%b %d, %Y'),
+            'value': round(running, 2),
+            'ticker': t.ticker,
+        })
+
+    # --- Win rate by strategy ---
+    strat_data = defaultdict(lambda: {'wins': 0, 'total': 0, 'returns': []})
+    for t in closed:
+        key = t.strategy.strip() if t.strategy and t.strategy.strip() else 'Untagged'
+        strat_data[key]['total'] += 1
+        strat_data[key]['returns'].append(t.return_pct)
+        if t.return_pct > 0:
+            strat_data[key]['wins'] += 1
+    strategies = []
+    for name, d in strat_data.items():
+        strategies.append({
+            'name': name,
+            'win_rate': round(d['wins'] / d['total'] * 100, 1),
+            'avg_return': round(sum(d['returns']) / len(d['returns']), 2),
+            'count': d['total'],
+        })
+    strategies.sort(key=lambda x: x['win_rate'], reverse=True)
+
+    # --- Best / worst sectors ---
+    sector_data = defaultdict(lambda: {'wins': 0, 'total': 0, 'returns': []})
+    for t in closed:
+        key = t.sector.strip() if t.sector and t.sector.strip() else 'Untagged'
+        sector_data[key]['total'] += 1
+        sector_data[key]['returns'].append(t.return_pct)
+        if t.return_pct > 0:
+            sector_data[key]['wins'] += 1
+    sectors = []
+    for name, d in sector_data.items():
+        sectors.append({
+            'name': name,
+            'avg_return': round(sum(d['returns']) / len(d['returns']), 2),
+            'win_rate': round(d['wins'] / d['total'] * 100, 1),
+            'count': d['total'],
+        })
+    sectors.sort(key=lambda x: x['avg_return'], reverse=True)
+
+    # --- Average hold time ---
+    hold_times = []
+    for t in closed:
+        if t.entry_date and t.exit_date:
+            hold_times.append((t.exit_date - t.entry_date).days)
+    avg_hold = round(sum(hold_times) / len(hold_times), 1) if hold_times else None
+
+    # --- Long vs Short breakdown ---
+    long_trades = [t for t in closed if t.position_type == 'long']
+    short_trades = [t for t in closed if t.position_type == 'short']
+    def side_stats(ts):
+        if not ts: return None
+        wins = sum(1 for t in ts if t.return_pct > 0)
+        return {
+            'count': len(ts),
+            'win_rate': round(wins / len(ts) * 100, 1),
+            'avg_return': round(sum(t.return_pct for t in ts) / len(ts), 2),
+        }
+
+    # --- Best / worst trades ---
+    best = max(closed, key=lambda t: t.return_pct)
+    worst = min(closed, key=lambda t: t.return_pct)
+
+    # --- Monthly returns ---
+    monthly = defaultdict(list)
+    for t in closed:
+        date = t.exit_date or t.entry_date
+        key = date.strftime('%b %Y')
+        monthly[key].append(t.return_pct)
+    monthly_data = []
+    for k, v in sorted(monthly.items(), key=lambda x: datetime.strptime(x[0], '%b %Y')):
+        monthly_data.append({
+            'month': k,
+            'avg': round(sum(v) / len(v), 2),
+            'count': len(v),
+        })
+
+    return render_template('analytics.html',
+        empty=False,
+        total_closed=len(closed),
+        avg_hold=avg_hold,
+        cumulative=cumulative,
+        strategies=strategies,
+        sectors=sectors,
+        long_stats=side_stats(long_trades),
+        short_stats=side_stats(short_trades),
+        best=best,
+        worst=worst,
+        monthly=monthly_data,
+    )
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
