@@ -22,17 +22,20 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
 
-with app.app_context():
-    db.create_all()
-    # One-time migration: rename position_size to stop_limit if it still exists
-    with db.engine.connect() as conn:
-        try:
-            conn.execute(db.text(
-                'ALTER TABLE trades RENAME COLUMN position_size TO stop_limit'
-            ))
-            conn.commit()
-        except Exception:
-            pass  # Column already renamed or doesn't exist — safe to ignore
+@app.before_request
+def initialize_db():
+    # Runs once on first request, not at startup — avoids blocking gunicorn boot
+    if not getattr(app, '_db_initialized', False):
+        db.create_all()
+        with db.engine.connect() as conn:
+            try:
+                conn.execute(db.text(
+                    'ALTER TABLE trades RENAME COLUMN position_size TO stop_limit'
+                ))
+                conn.commit()
+            except Exception:
+                pass
+        app._db_initialized = True
 
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
