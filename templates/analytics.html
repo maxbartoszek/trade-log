@@ -63,7 +63,7 @@
 {% endif %}
 
 <!-- Strategy + Sector row -->
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem" class="analytics-two-col">
 
   <!-- Strategy breakdown -->
   <div class="analytics-card">
@@ -229,6 +229,10 @@
   }
   @media (max-width: 768px) {
     .analytics-two-col { grid-template-columns: 1fr !important; }
+  }
+  @media (max-width: 768px) {
+    .analytics-two-col { grid-template-columns: 1fr !important; }
+    .analytics-card { padding: 1rem; }
   }
 </style>
 
