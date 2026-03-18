@@ -451,7 +451,9 @@ def toggle_share():
 
 @app.route('/public/<token>')
 def public_journal(token):
-    user = User.query.filter_by(share_token=token).first_or_404()
+    user = User.query.filter_by(share_token=token).first()
+    if not user:
+        return render_template('link_disabled.html'), 404
     all_trades = Trade.query.filter_by(user_id=user.id).all()
     closed = sum(1 for t in all_trades if t.status == 'closed')
     wins   = sum(1 for t in all_trades if t.return_pct and t.return_pct > 0)
