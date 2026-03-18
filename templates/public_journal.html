@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ user.username }}'s Trade Journal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500@display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0b0d; --bg2: #111318; --bg3: #181c24;
+      --border: #1e2330; --border2: #2a3040;
+      --text: #d8e0f0; --text-dim: #8a96b0; --text-bright: #eef2ff;
+      --accent: #00e5a0; --accent-dim: rgba(0,229,160,0.12);
+      --red: #ff4d6a; --red-dim: rgba(255,77,106,0.12);
+      --yellow: #f5c842; --yellow-dim: rgba(245,200,66,0.12);
+      --mono: 'Space Mono', monospace; --sans: 'DM Sans', sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 14px; line-height: 1.6; min-height: 100vh; }
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image: linear-gradient(rgba(0,229,160,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(0,229,160,0.015) 1px, transparent 1px);
+      background-size: 40px 40px; pointer-events: none; z-index: 0;
+    }
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,11,13,0.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 52px;
+    }
+    .nav-brand { font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--accent); letter-spacing: 0.1em; display: flex; align-items: center; gap: 8px; }
+    .nav-brand::before { content: '▶'; font-size: 9px; }
+    .nav-readonly { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; padding: 4px 10px; border-radius: 3px; background: var(--yellow-dim); color: var(--yellow); border: 1px solid rgba(245,200,66,0.25); }
+    main { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 2rem 2rem 4rem; }
+    .page-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+    .page-title { font-family: var(--mono); font-size: 20px; font-weight: 700; color: var(--text-bright); }
+    .page-subtitle { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+    .stats-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 2rem; }
+    .stat-card { background: var(--bg2); padding: 1.2rem 1.4rem; }
+    .stat-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; color: var(--text-dim); text-transform: uppercase; margin-bottom: 6px; }
+    .stat-value { font-family: var(--mono); font-size: 22px; font-weight: 700; color: var(--text-bright); }
+    .stat-value.up { color: var(--accent); }
+    .stat-value.down { color: var(--red); }
+    .trade-list { display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+    .trade-card { background: var(--bg2); padding: 1.2rem 1.6rem; display: grid; grid-template-columns: 80px 60px 1fr auto auto; align-items: center; gap: 1.5rem; text-decoration: none; color: inherit; transition: background 0.12s; cursor: pointer; }
+    .trade-card:hover { background: var(--bg3); }
+    .trade-ticker { font-family: var(--mono); font-size: 16px; font-weight: 700; color: var(--text-bright); letter-spacing: 0.05em; }
+    .trade-side { font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 0.1em; padding: 3px 8px; border-radius: 3px; width: fit-content; }
+    .side-long { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(0,229,160,0.25); }
+    .side-short { background: var(--red-dim); color: var(--red); border: 1px solid rgba(255,77,106,0.25); }
+    .trade-meta { display: flex; flex-direction: column; gap: 2px; }
+    .trade-thesis-preview { font-size: 12px; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 400px; }
+    .trade-dates { font-family: var(--mono); font-size: 11px; color: var(--text-dim); }
+    .trade-prices { font-family: var(--mono); font-size: 12px; color: var(--text-dim); text-align: right; }
+    .trade-return { font-family: var(--mono); font-size: 18px; font-weight: 700; min-width: 80px; text-align: right; }
+    .trade-return.up { color: var(--accent); }
+    .trade-return.down { color: var(--red); }
+    .trade-return.open { color: var(--yellow); font-size: 11px; padding: 4px 8px; background: var(--yellow-dim); border-radius: 3px; }
+    #loading-indicator, #end-of-list { text-align: center; padding: 2rem; }
+    #loading-indicator span, #end-of-list span { font-family: var(--mono); font-size: 11px; color: var(--text-dim); letter-spacing: 0.1em; }
+    @media (max-width: 768px) {
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .stats-row .stat-card:last-child:nth-child(odd) { grid-column: 1 / -1; max-width: 50%; margin: 0 auto; width: 100%; }
+      .trade-card { grid-template-columns: 1fr auto; }
+      .trade-meta { display: none; }
+      main { padding: 1rem 1rem 3rem; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-brand">TRADELOG</div>
+    <span class="nav-readonly">READ ONLY</span>
+    <span style="font-family:var(--mono);font-size:11px;color:var(--text-dim)">{{ user.username }}</span>
+  </nav>
+  <main>
+    <div class="page-header">
+      <div>
+        <div class="page-title">{{ user.username }}'s Trade Journal</div>
+        <div class="page-subtitle" id="trade-count-label">Loading trades...</div>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-label">Total Trades</div><div class="stat-value">{{ stats.total }}</div></div>
+      <div class="stat-card"><div class="stat-label">Win Rate</div><div class="stat-value {% if stats.win_rate >= 50 %}up{% else %}down{% endif %}">{{ stats.win_rate }}%</div></div>
+      <div class="stat-card"><div class="stat-label">Avg Return</div><div class="stat-value {% if stats.avg_return >= 0 %}up{% else %}down{% endif %}">{{ '+' if stats.avg_return >= 0 else '' }}{{ stats.avg_return }}%</div></div>
+      <div class="stat-card"><div class="stat-label">Wins / Losses</div><div class="stat-value">{{ stats.wins }}<span style="color:var(--text-dim);font-size:14px">/</span>{{ stats.losses }}</div></div>
+      <div class="stat-card"><div class="stat-label">Open Positions</div><div class="stat-value {% if stats.open > 0 %}up{% endif %}">{{ stats.open }}</div></div>
+    </div>
+
+    <div class="trade-list" id="trade-list"></div>
+    <div id="scroll-sentinel" style="height:1px;margin-top:1px"></div>
+    <div id="loading-indicator" style="display:none"><span>LOADING...</span></div>
+    <div id="end-of-list" style="display:none"><span>&#8212; END OF JOURNAL &#8212;</span></div>
+  </main>
+
+  <script>
+    var token = "{{ token }}";
+    var currentPage = 1, isLoading = false, hasMore = true;
+
+    function escHtml(str) {
+      return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function buildCard(t) {
+      var returnHtml = t.return_pct === null
+        ? '<div class="trade-return open">OPEN</div>'
+        : '<div class="trade-return ' + (t.return_pct >= 0 ? 'up' : 'down') + '">' + (t.return_pct >= 0 ? '+' : '') + t.return_pct + '%</div>';
+      var thesis = t.thesis
+        ? '<div class="trade-thesis-preview">' + escHtml(t.thesis) + '</div>'
+        : '<div class="trade-thesis-preview" style="font-style:italic;opacity:0.5">No thesis recorded</div>';
+      var dates = [t.entry_date, t.exit_date ? '\u2192 ' + t.exit_date : ''].filter(Boolean).join(' ');
+      var exitPrice = t.exit_price ? '<div style="color:var(--text-bright)">$' + t.exit_price.toFixed(2) + '</div>' : '';
+      return '<a href="/public/' + token + '/trade/' + t.id + '" class="trade-card">'
+        + '<span class="trade-ticker">' + escHtml(t.ticker) + '</span>'
+        + '<span class="trade-side side-' + t.position_type + '">' + t.position_type.toUpperCase() + '</span>'
+        + '<div class="trade-meta">' + thesis + '<div class="trade-dates">' + escHtml(dates) + '</div></div>'
+        + '<div class="trade-prices"><div>$' + t.entry_price.toFixed(2) + '</div>' + exitPrice + '</div>'
+        + '<div>' + returnHtml + '</div></a>';
+    }
+
+    async function loadTrades() {
+      if (isLoading || !hasMore) return;
+      isLoading = true;
+      document.getElementById('loading-indicator').style.display = 'block';
+      var res = await fetch('/public/' + token + '/trades?page=' + currentPage);
+      var data = await res.json();
+      hasMore = data.has_more;
+      var list = document.getElementById('trade-list');
+      data.trades.forEach(function(t) { list.insertAdjacentHTML('beforeend', buildCard(t)); });
+      document.getElementById('trade-count-label').textContent = data.total + ' trade' + (data.total !== 1 ? 's' : '') + ' recorded';
+      if (!hasMore && data.total > 0) document.getElementById('end-of-list').style.display = 'block';
+      currentPage++;
+      isLoading = false;
+      document.getElementById('loading-indicator').style.display = 'none';
+    }
+
+    var observer = new IntersectionObserver(function(e) {
+      if (e[0].isIntersecting && hasMore && !isLoading) loadTrades();
+    }, { rootMargin: '300px' });
+    observer.observe(document.getElementById('scroll-sentinel'));
+    loadTrades();
+  </script>
+</body>
+</html>

@@ -37,6 +37,28 @@
   </div>
 </div>
 
+<!-- Share link banner -->
+<div style="margin-bottom:1.25rem;padding:1rem 1.4rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
+  <div>
+    <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-dim);margin-bottom:4px">Public Share Link</div>
+    {% if current_user.share_token %}
+    <div style="font-family:var(--mono);font-size:12px;color:var(--accent);word-break:break-all" id="share-url">{{ request.host_url }}public/{{ current_user.share_token }}</div>
+    {% else %}
+    <div style="font-family:var(--mono);font-size:12px;color:var(--text-dim)">Disabled — enable to share a read-only view with recruiters</div>
+    {% endif %}
+  </div>
+  <div style="display:flex;gap:0.5rem;flex-shrink:0">
+    {% if current_user.share_token %}
+    <button onclick="navigator.clipboard.writeText(document.getElementById('share-url').textContent.trim()).then(()=>this.textContent='Copied!').catch(()=>{}); return false;" class="btn btn-ghost" style="font-size:11px">Copy</button>
+    {% endif %}
+    <form method="POST" action="{{ url_for('toggle_share') }}">
+      <button type="submit" class="btn {% if current_user.share_token %}btn-danger{% else %}btn-ghost{% endif %}" style="font-size:11px">
+        {% if current_user.share_token %}Disable Link{% else %}Enable Link{% endif %}
+      </button>
+    </form>
+  </div>
+</div>
+
 <!-- Filter bar -->
 <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem;flex-wrap:wrap">
   <button id="filter-all" class="filter-btn active" onclick="setFilter(false)">All Trades</button>

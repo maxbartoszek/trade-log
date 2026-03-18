@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ trade.ticker }} — {{ trade.user.username }}'s Trade Journal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0b0d; --bg2: #111318; --bg3: #181c24;
+      --border: #1e2330; --border2: #2a3040;
+      --text: #d8e0f0; --text-dim: #8a96b0; --text-bright: #eef2ff;
+      --accent: #00e5a0; --accent-dim: rgba(0,229,160,0.12);
+      --red: #ff4d6a; --red-dim: rgba(255,77,106,0.12);
+      --yellow: #f5c842; --yellow-dim: rgba(245,200,66,0.12);
+      --mono: 'Space Mono', monospace; --sans: 'DM Sans', sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 14px; line-height: 1.6; min-height: 100vh; }
+    body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(0,229,160,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(0,229,160,0.015) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; z-index: 0; }
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(10,11,13,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 52px; }
+    .nav-brand { font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--accent); letter-spacing: 0.1em; display: flex; align-items: center; gap: 8px; }
+    .nav-brand::before { content: '▶'; font-size: 9px; }
+    .nav-readonly { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; padding: 4px 10px; border-radius: 3px; background: var(--yellow-dim); color: var(--yellow); border: 1px solid rgba(245,200,66,0.25); }
+    main { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 2rem 2rem 4rem; }
+    .back-btn { font-family: var(--mono); font-size: 11px; color: var(--text-dim); text-decoration: none; border: 1px solid var(--border2); padding: 6px 14px; border-radius: 5px; display: inline-block; margin-bottom: 1.5rem; transition: all 0.15s; }
+    .back-btn:hover { color: var(--text-bright); border-color: var(--text-dim); }
+    .detail-header { display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2.5rem; flex-wrap: wrap; }
+    .detail-ticker { font-family: var(--mono); font-size: 48px; font-weight: 700; color: var(--text-bright); letter-spacing: 0.04em; line-height: 1; }
+    .detail-return { font-family: var(--mono); font-size: 36px; font-weight: 700; line-height: 1; margin-left: auto; }
+    .detail-return.up { color: var(--accent); }
+    .detail-return.down { color: var(--red); }
+    .trade-side { font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 0.1em; padding: 3px 8px; border-radius: 3px; }
+    .side-long { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(0,229,160,0.25); }
+    .side-short { background: var(--red-dim); color: var(--red); border: 1px solid rgba(255,77,106,0.25); }
+    .badge { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; padding: 2px 8px; border-radius: 3px; text-transform: uppercase; }
+    .badge-open { background: var(--yellow-dim); color: var(--yellow); border: 1px solid rgba(245,200,66,0.25); }
+    .badge-closed { background: var(--bg3); color: var(--text-dim); border: 1px solid var(--border2); }
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 2rem; }
+    .detail-cell { background: var(--bg2); padding: 1rem 1.4rem; }
+    .detail-cell-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; color: var(--text-dim); text-transform: uppercase; margin-bottom: 4px; }
+    .detail-cell-value { font-family: var(--mono); font-size: 15px; color: var(--text-bright); font-weight: 700; }
+    .note-section { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; }
+    .note-section-title { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.75rem; }
+    .note-text { font-family: var(--sans); font-size: 14px; color: var(--text); line-height: 1.8; }
+    .confidence-display { display: flex; gap: 4px; margin-top: 4px; }
+    .conf-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border2); }
+    .conf-dot.filled { background: var(--accent); }
+    @media (max-width: 768px) { .detail-ticker { font-size: 32px; } .detail-grid { grid-template-columns: 1fr; } main { padding: 1rem 1rem 3rem; } }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-brand">TRADELOG</div>
+    <span class="nav-readonly">READ ONLY</span>
+    <span style="font-family:var(--mono);font-size:11px;color:var(--text-dim)">{{ trade.user.username }}</span>
+  </nav>
+  <main>
+    <a href="/public/{{ token }}" class="back-btn">← Back</a>
+
+    <div class="detail-header">
+      <div>
+        <div class="detail-ticker">{{ trade.ticker }}</div>
+        <div style="margin-top:6px;display:flex;gap:8px;align-items:center">
+          <span class="trade-side side-{{ trade.position_type }}">{{ trade.position_type | upper }}</span>
+          <span class="badge badge-{{ trade.status }}">{{ trade.status | upper }}</span>
+          {% if trade.strategy %}<span style="font-family:var(--mono);font-size:11px;color:var(--text-dim)">{{ trade.strategy }}</span>{% endif %}
+        </div>
+      </div>
+      {% if trade.return_pct is not none %}
+      <div style="margin-left:auto;text-align:right">
+        <div class="detail-return {% if trade.return_pct >= 0 %}up{% else %}down{% endif %}">{{ '+' if trade.return_pct >= 0 else '' }}{{ trade.return_pct }}%</div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text-dim);margin-top:4px">RETURN</div>
+      </div>
+      {% else %}
+      <div style="margin-left:auto"><div class="detail-return" style="color:var(--yellow)">OPEN</div></div>
+      {% endif %}
+    </div>
+
+    <div class="detail-grid">
+      <div class="detail-cell"><div class="detail-cell-label">Entry Price</div><div class="detail-cell-value">${{ '%.2f' | format(trade.entry_price) }}</div></div>
+      <div class="detail-cell"><div class="detail-cell-label">Exit Price</div><div class="detail-cell-value">{{ '$%.2f' | format(trade.exit_price) if trade.exit_price else '—' }}</div></div>
+      <div class="detail-cell"><div class="detail-cell-label">Entry Date</div><div class="detail-cell-value">{{ trade.entry_date.strftime('%b %d, %Y') if trade.entry_date else '—' }}</div></div>
+      <div class="detail-cell"><div class="detail-cell-label">Exit Date</div><div class="detail-cell-value">{{ trade.exit_date.strftime('%b %d, %Y') if trade.exit_date else '—' }}</div></div>
+      <div class="detail-cell"><div class="detail-cell-label">Stop Limit</div><div class="detail-cell-value">{{ '$%.2f' | format(trade.stop_limit) if trade.stop_limit else '—' }}</div></div>
+      <div class="detail-cell"><div class="detail-cell-label">Sector</div><div class="detail-cell-value">{{ trade.sector if trade.sector else '—' }}</div></div>
+    </div>
+
+    {% if trade.notes %}{% set n = trade.notes %}
+    {% if n.confidence_level %}
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem;padding:1rem 1.4rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px;">
+      <span style="font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-dim)">Confidence</span>
+      <div class="confidence-display">{% for i in range(1, 11) %}<div class="conf-dot {% if i <= n.confidence_level %}filled{% endif %}"></div>{% endfor %}</div>
+      <span style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--accent)">{{ n.confidence_level }}/10</span>
+    </div>
+    {% endif %}
+    {% if n.thesis %}<div class="note-section"><div class="note-section-title">Investment Thesis</div><div class="note-text">{{ n.thesis }}</div></div>{% endif %}
+    {% if n.catalyst %}<div class="note-section"><div class="note-section-title">Catalyst</div><div class="note-text">{{ n.catalyst }}</div></div>{% endif %}
+    {% if n.risk_factors %}<div class="note-section"><div class="note-section-title">Risk Factors</div><div class="note-text">{{ n.risk_factors }}</div></div>{% endif %}
+    {% if n.post_trade_review %}<div class="note-section" style="border-color:var(--border2)"><div class="note-section-title" style="color:var(--yellow)">Post-Trade Review</div><div class="note-text">{{ n.post_trade_review }}</div></div>{% endif %}
+    {% if n.mistakes %}<div class="note-section" style="border-color:rgba(255,77,106,0.2)"><div class="note-section-title" style="color:var(--red)">Mistakes</div><div class="note-text">{{ n.mistakes }}</div></div>{% endif %}
+    {% if n.lessons %}<div class="note-section" style="border-color:rgba(0,229,160,0.2)"><div class="note-section-title">Lessons Learned</div><div class="note-text">{{ n.lessons }}</div></div>{% endif %}
+    {% endif %}
+  </main>
+</body>
+</html>
