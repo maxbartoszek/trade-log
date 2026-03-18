@@ -12,6 +12,7 @@ class User(db.Model, UserMixin):
     password_hash = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     share_token = db.Column(db.String(64), unique=True, nullable=True)
+    share_enabled = db.Column(db.Boolean, default=False)
     trades = db.relationship('Trade', backref='user', lazy=True, cascade='all, delete-orphan')
 
 class Trade(db.Model):

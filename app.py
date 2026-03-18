@@ -59,6 +59,24 @@ def initialize_db():
                 conn.commit()
             except Exception:
                 pass
+            try:
+                conn.execute(db.text(
+                    'ALTER TABLE users ADD COLUMN share_enabled BOOLEAN DEFAULT FALSE'
+                ))
+                conn.commit()
+            except Exception:
+                pass
+            # Backfill share_token for existing users who don't have one
+            try:
+                import secrets as _secrets
+                from sqlalchemy import text as _text
+                rows = conn.execute(_text("SELECT id FROM users WHERE share_token IS NULL")).fetchall()
+                for row in rows:
+                    conn.execute(_text("UPDATE users SET share_token = :t WHERE id = :id"),
+                                 {'t': _secrets.token_urlsafe(32), 'id': row[0]})
+                conn.commit()
+            except Exception:
+                pass
         app._db_initialized = True
 
 
@@ -412,8 +430,10 @@ def register():
         if User.query.filter_by(email=email).first():
             flash('Email already registered.', 'error')
             return render_template('register.html')
+        import secrets
         pw_hash = bcrypt.generate_password_hash(password).decode('utf-8')
-        user = User(username=username, email=email, password_hash=pw_hash)
+        user = User(username=username, email=email, password_hash=pw_hash,
+                    share_token=secrets.token_urlsafe(32), share_enabled=False)
         db.session.add(user)
         db.session.commit()
         login_user(user)
@@ -438,21 +458,18 @@ def login():
 @app.route('/share/toggle', methods=['POST'])
 @login_required
 def toggle_share():
-    import secrets
-    if current_user.share_token:
-        current_user.share_token = None
-        db.session.commit()
-        flash('Public link disabled.', 'info')
-    else:
-        current_user.share_token = secrets.token_urlsafe(32)
-        db.session.commit()
+    current_user.share_enabled = not current_user.share_enabled
+    db.session.commit()
+    if current_user.share_enabled:
         flash('Public link enabled.', 'success')
+    else:
+        flash('Public link disabled.', 'info')
     return redirect(url_for('dashboard'))
 
 @app.route('/public/<token>')
 def public_journal(token):
     user = User.query.filter_by(share_token=token).first()
-    if not user:
+    if not user or not user.share_enabled:
         return render_template('link_disabled.html'), 404
     all_trades = Trade.query.filter_by(user_id=user.id).all()
     closed = sum(1 for t in all_trades if t.status == 'closed')
