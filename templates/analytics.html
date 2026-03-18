@@ -255,6 +255,7 @@
   }
 </style>
 
+{% if not empty %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
   const isDark = !document.documentElement.classList.contains('light');
@@ -367,5 +368,6 @@
   });
   {% endif %}
 </script>
+{% endif %}
 
 {% endblock %}
