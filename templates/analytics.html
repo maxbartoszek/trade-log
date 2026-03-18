@@ -147,12 +147,12 @@
 {% if long_stats or short_stats %}
 <div class="analytics-card" style="margin-bottom:1.5rem">
   <div class="analytics-card-title">Long vs Short Breakdown</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border-radius:6px;overflow:hidden;margin-top:0.5rem">
+  <div style="display:flex;flex-direction:column;gap:1px;background:var(--border);border-radius:6px;overflow:hidden;margin-top:0.5rem">
     {% for label, s in [('Long', long_stats), ('Short', short_stats)] %}
     {% if s %}
     <div style="background:var(--bg3);padding:1.2rem 1.5rem">
       <div style="font-family:var(--mono);font-size:11px;letter-spacing:0.1em;color:var(--text-dim);text-transform:uppercase;margin-bottom:0.75rem">{{ label }}</div>
-      <div style="display:flex;gap:2rem">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem">
         <div>
           <div style="font-family:var(--mono);font-size:10px;color:var(--text-dim);margin-bottom:3px">TRADES</div>
           <div style="font-family:var(--mono);font-size:20px;font-weight:700;color:var(--text-bright)">{{ s.count }}</div>
@@ -202,16 +202,20 @@
     text-transform: uppercase;
     color: var(--text-dim);
     text-align: left;
-    padding: 0 0 0.75rem 0;
+    padding: 0 1.5rem 0.75rem 0;
     border-bottom: 1px solid var(--border);
+    white-space: nowrap;
   }
+  .analytics-table th:last-child { padding-right: 0; }
   .analytics-table td {
-    padding: 0.65rem 0;
+    padding: 0.65rem 1.5rem 0.65rem 0;
     border-bottom: 1px solid var(--border);
     color: var(--text);
     font-family: var(--mono);
     font-size: 12px;
+    white-space: nowrap;
   }
+  .analytics-table td:last-child { padding-right: 0; }
   .analytics-table tr:last-child td { border-bottom: none; }
   .cell-up { color: var(--accent) !important; }
   .cell-down { color: var(--red) !important; }
