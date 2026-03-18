@@ -181,6 +181,7 @@
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 1.5rem;
+    overflow: hidden;
   }
   .analytics-card-title {
     font-family: var(--mono);
@@ -236,11 +237,16 @@
   }
   @media (max-width: 768px) {
     .analytics-two-col { grid-template-columns: 1fr !important; }
-    .analytics-card { padding: 1rem; }
-    .analytics-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    .analytics-table { min-width: 360px; }
+    .analytics-card { padding: 0.75rem; overflow: visible; }
+    .analytics-table-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin: 0 -0.75rem;
+      padding: 0 0.75rem;
+    }
+    .analytics-table { min-width: 340px; width: 100%; }
     .analytics-table th,
-    .analytics-table td { padding-right: 1rem; font-size: 11px; }
+    .analytics-table td { padding-right: 0.75rem; font-size: 11px; }
   }
 </style>
 
