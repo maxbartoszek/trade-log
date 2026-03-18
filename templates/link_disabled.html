@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Link Unavailable — TradeLog</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0b0d; --bg2: #111318; --border: #1e2330;
+      --text: #d8e0f0; --text-dim: #8a96b0; --text-bright: #eef2ff;
+      --accent: #00e5a0; --yellow: #f5c842; --yellow-dim: rgba(245,200,66,0.12);
+      --mono: 'Space Mono', monospace; --sans: 'DM Sans', sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg); color: var(--text); font-family: var(--sans);
+      min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image: linear-gradient(rgba(0,229,160,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(0,229,160,0.015) 1px, transparent 1px);
+      background-size: 40px 40px; pointer-events: none;
+    }
+    .card {
+      position: relative; z-index: 1;
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 12px; padding: 3rem 2.5rem; max-width: 420px; width: 90%;
+      text-align: center;
+    }
+    .icon {
+      font-size: 36px; margin-bottom: 1.25rem; opacity: 0.5;
+    }
+    .tag {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em;
+      padding: 4px 10px; border-radius: 3px;
+      background: var(--yellow-dim); color: var(--yellow);
+      border: 1px solid rgba(245,200,66,0.25);
+      display: inline-block; margin-bottom: 1.25rem;
+    }
+    h1 {
+      font-family: var(--mono); font-size: 18px; font-weight: 700;
+      color: var(--text-bright); margin-bottom: 0.75rem;
+    }
+    p {
+      font-size: 14px; color: var(--text-dim); line-height: 1.7;
+    }
+    .brand {
+      font-family: var(--mono); font-size: 12px; font-weight: 700;
+      color: var(--accent); letter-spacing: 0.1em; margin-top: 2rem;
+      display: block; opacity: 0.6;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">🔒</div>
+    <span class="tag">LINK UNAVAILABLE</span>
+    <h1>This journal is private</h1>
+    <p>The owner of this trade journal has disabled public sharing. If you believe this is a mistake, reach out to them directly for an updated link.</p>
+    <span class="brand">▶ TRADELOG</span>
+  </div>
+</body>
+</html>
