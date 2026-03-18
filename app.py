@@ -35,6 +35,13 @@ def initialize_db():
                 conn.commit()
             except Exception:
                 pass
+            try:
+                conn.execute(db.text(
+                    'ALTER TABLE users ADD COLUMN share_token VARCHAR(64) UNIQUE'
+                ))
+                conn.commit()
+            except Exception:
+                pass
         app._db_initialized = True
 
 bcrypt = Bcrypt(app)
@@ -407,6 +414,83 @@ def login():
             return redirect(url_for('dashboard'))
         flash('Invalid credentials.', 'error')
     return render_template('login.html')
+
+
+@app.route('/share/toggle', methods=['POST'])
+@login_required
+def toggle_share():
+    import secrets
+    if current_user.share_token:
+        current_user.share_token = None
+        db.session.commit()
+        flash('Public link disabled.', 'info')
+    else:
+        current_user.share_token = secrets.token_urlsafe(32)
+        db.session.commit()
+        flash('Public link enabled.', 'success')
+    return redirect(url_for('dashboard'))
+
+@app.route('/public/<token>')
+def public_journal(token):
+    user = User.query.filter_by(share_token=token).first_or_404()
+    all_trades = Trade.query.filter_by(user_id=user.id).all()
+    closed = sum(1 for t in all_trades if t.status == 'closed')
+    wins   = sum(1 for t in all_trades if t.return_pct and t.return_pct > 0)
+    losses = sum(1 for t in all_trades if t.return_pct and t.return_pct < 0)
+    stats = {
+        'total': len(all_trades),
+        'wins': wins,
+        'losses': losses,
+        'avg_return': round(sum(t.return_pct for t in all_trades if t.return_pct) / max(len([t for t in all_trades if t.return_pct]), 1), 2),
+        'open': sum(1 for t in all_trades if t.status == 'open'),
+        'win_rate': round((wins / max(closed, 1)) * 100, 1),
+    }
+    return render_template('public_journal.html', user=user, stats=stats, token=token)
+
+@app.route('/public/<token>/trades')
+def public_trades(token):
+    user = User.query.filter_by(share_token=token).first_or_404()
+    PAGE_SIZE = 50
+    page = request.args.get('page', 1, type=int)
+    filter_open = request.args.get('open_only', 'false') == 'true'
+
+    query = Trade.query.filter_by(user_id=user.id)
+    if filter_open:
+        query = query.filter_by(status='open')
+    query = query.order_by(
+        db.func.coalesce(Trade.exit_date, Trade.entry_date).desc().nullslast()
+    )
+
+    total = query.count()
+    trades = query.offset((page - 1) * PAGE_SIZE).limit(PAGE_SIZE).all()
+
+    def trade_dict(t):
+        return {
+            'id': t.id,
+            'ticker': t.ticker,
+            'position_type': t.position_type,
+            'entry_price': t.entry_price,
+            'exit_price': t.exit_price,
+            'entry_date': t.entry_date.strftime('%b %d, %Y') if t.entry_date else None,
+            'exit_date': t.exit_date.strftime('%b %d, %Y') if t.exit_date else None,
+            'return_pct': t.return_pct,
+            'status': t.status,
+            'thesis': t.notes.thesis[:80] if t.notes and t.notes.thesis else None,
+        }
+
+    return jsonify({
+        'trades': [trade_dict(t) for t in trades],
+        'page': page,
+        'total': total,
+        'has_more': (page * PAGE_SIZE) < total,
+        'page_size': PAGE_SIZE,
+    })
+
+@app.route('/public/<token>/trade/<int:trade_id>')
+def public_trade_detail(token, trade_id):
+    user = User.query.filter_by(share_token=token).first_or_404()
+    trade = Trade.query.filter_by(id=trade_id, user_id=user.id).first_or_404()
+    return render_template('public_trade_detail.html', trade=trade, token=token)
 
 @app.route('/manifest.json')
 def manifest():
