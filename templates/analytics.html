@@ -237,16 +237,21 @@
   }
   @media (max-width: 768px) {
     .analytics-two-col { grid-template-columns: 1fr !important; }
-    .analytics-card { padding: 0.75rem; overflow: visible; }
-    .analytics-table-wrap {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      margin: 0 -0.75rem;
-      padding: 0 0.75rem;
-    }
-    .analytics-table { min-width: 340px; width: 100%; }
+    .analytics-card { padding: 0.75rem; }
+    /* Hide the mini bar column on mobile — just show text values */
+    .mini-bar-track { display: none; }
+    .analytics-table-wrap { width: 100%; }
+    .analytics-table { width: 100%; min-width: 0; table-layout: fixed; }
     .analytics-table th,
-    .analytics-table td { padding-right: 0.75rem; font-size: 11px; }
+    .analytics-table td { padding-right: 0.5rem; font-size: 11px; overflow: hidden; text-overflow: ellipsis; }
+    .analytics-table th:first-child,
+    .analytics-table td:first-child { width: 45%; }
+    .analytics-table th:nth-child(2),
+    .analytics-table td:nth-child(2) { width: 15%; }
+    .analytics-table th:nth-child(3),
+    .analytics-table td:nth-child(3) { width: 22%; }
+    .analytics-table th:nth-child(4),
+    .analytics-table td:nth-child(4) { width: 18%; }
   }
 </style>
 
