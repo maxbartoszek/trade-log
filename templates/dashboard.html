@@ -38,30 +38,30 @@
 </div>
 
 <!-- Share link banner -->
-<div style="margin-bottom:1.25rem;padding:1rem 1.4rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
-  <div style="flex:1;min-width:0">
-    <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-dim);margin-bottom:4px">
-      Public Share Link
+<div style="margin-bottom:1.25rem;padding:1rem 1.4rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px;">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:0.75rem;margin-bottom:{% if current_user.share_enabled %}0.6rem{% else %}0{% endif %}">
+    <div style="display:flex;align-items:center;gap:8px">
+      <span style="font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-dim)">Public Share Link</span>
       {% if current_user.share_enabled %}
-      <span style="margin-left:8px;padding:2px 6px;border-radius:3px;background:var(--accent-dim);color:var(--accent);border:1px solid rgba(0,229,160,0.25)">ACTIVE</span>
+      <span style="padding:2px 6px;border-radius:3px;background:var(--accent-dim);color:var(--accent);border:1px solid rgba(0,229,160,0.25);font-family:var(--mono);font-size:9px;letter-spacing:0.08em">ACTIVE</span>
       {% else %}
-      <span style="margin-left:8px;padding:2px 6px;border-radius:3px;background:var(--bg3);color:var(--text-dim);border:1px solid var(--border2)">DISABLED</span>
+      <span style="padding:2px 6px;border-radius:3px;background:var(--bg3);color:var(--text-dim);border:1px solid var(--border2);font-family:var(--mono);font-size:9px;letter-spacing:0.08em">DISABLED</span>
       {% endif %}
     </div>
-    <div style="font-family:var(--mono);font-size:12px;{% if current_user.share_enabled %}color:var(--accent){% else %}color:var(--text-dim);text-decoration:line-through;opacity:0.5{% endif %};word-break:break-all" id="share-url">
-      {{ request.host_url }}public/{{ current_user.share_token }}
+    <div style="display:flex;gap:0.5rem;flex-shrink:0">
+      {% if current_user.share_enabled %}
+      <button onclick="navigator.clipboard.writeText(document.getElementById('share-url').textContent.trim()).then(()=>this.textContent='Copied!').catch(()=>{}); return false;" class="btn btn-ghost" style="font-size:11px;padding:6px 12px">Copy</button>
+      {% endif %}
+      <form method="POST" action="{{ url_for('toggle_share') }}">
+        <button type="submit" class="btn {% if current_user.share_enabled %}btn-danger{% else %}btn-ghost{% endif %}" style="font-size:11px;padding:6px 12px">
+          {% if current_user.share_enabled %}Disable{% else %}Enable{% endif %}
+        </button>
+      </form>
     </div>
   </div>
-  <div style="display:flex;gap:0.5rem;flex-shrink:0">
-    {% if current_user.share_enabled %}
-    <button onclick="navigator.clipboard.writeText(document.getElementById('share-url').textContent.trim()).then(()=>this.textContent='Copied!').catch(()=>{}); return false;" class="btn btn-ghost" style="font-size:11px">Copy</button>
-    {% endif %}
-    <form method="POST" action="{{ url_for('toggle_share') }}">
-      <button type="submit" class="btn {% if current_user.share_enabled %}btn-danger{% else %}btn-ghost{% endif %}" style="font-size:11px">
-        {% if current_user.share_enabled %}Disable{% else %}Enable{% endif %}
-      </button>
-    </form>
-  </div>
+  {% if current_user.share_enabled %}
+  <div style="font-family:var(--mono);font-size:11px;color:var(--accent);background:var(--bg3);border:1px solid var(--border2);border-radius:5px;padding:8px 10px;word-break:break-all;line-height:1.5" id="share-url">{{ request.host_url }}public/{{ current_user.share_token }}</div>
+  {% endif %}
 </div>
 
 <!-- Filter bar -->
