@@ -69,7 +69,7 @@
   <div class="analytics-card">
     <div class="analytics-card-title">Win Rate by Strategy</div>
     {% if strategies %}
-    <table class="analytics-table">
+    <div class="analytics-table-wrap"><table class="analytics-table">
       <thead>
         <tr>
           <th>Strategy</th>
@@ -97,7 +97,7 @@
         </tr>
         {% endfor %}
       </tbody>
-    </table>
+    </table></div>
     {% else %}
     <div style="color:var(--text-dim);font-size:13px;padding:1rem 0">No strategy tags on closed trades yet.</div>
     {% endif %}
@@ -107,7 +107,7 @@
   <div class="analytics-card">
     <div class="analytics-card-title">Performance by Sector</div>
     {% if sectors %}
-    <table class="analytics-table">
+    <div class="analytics-table-wrap"><table class="analytics-table">
       <thead>
         <tr>
           <th>Sector</th>
@@ -135,7 +135,7 @@
         </tr>
         {% endfor %}
       </tbody>
-    </table>
+    </table></div>
     {% else %}
     <div style="color:var(--text-dim);font-size:13px;padding:1rem 0">No sector tags on closed trades yet.</div>
     {% endif %}
@@ -237,6 +237,10 @@
   @media (max-width: 768px) {
     .analytics-two-col { grid-template-columns: 1fr !important; }
     .analytics-card { padding: 1rem; }
+    .analytics-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .analytics-table { min-width: 360px; }
+    .analytics-table th,
+    .analytics-table td { padding-right: 1rem; font-size: 11px; }
   }
 </style>
 
