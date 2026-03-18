@@ -21,8 +21,9 @@ Although free, Trade Log has enough storage to keep 250,000 logs across all acco
 - **Performance dashboard:** Win rate, average return, wins/losses, and open position count
 - **Analytical dashboard:** Displays more detailed metrics than Performance Dashboard (avg hold time, cumulative return, avg monthly returns, win rate by strategy, performance by sector, long vs short performance, etc.)
 - **Open positions filter:** One click to isolate all currently open trades
-- **Mobile use**: You can use it seemlessly on mobile devices. You can even add the webapp to your homepage where it'll act like an app without you downloading anything!
+- **Mobile use**: Use it seemlessly on mobile devices. You can even add the webapp to your homepage where it'll act like an app without you downloading anything!
 - **Light / dark mode:** Toggle between themes with your preference saved across sessions
+- **CSV Export**: Download your transactions off Trade Log in a CSV
 - **Secure authentication:** Personal accounts with bcrypt password hashing
 
 ---
