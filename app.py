@@ -22,6 +22,23 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
 
+# Run all migrations at module load time — must happen before any query runs
+def _run_migrations():
+    with app.app_context():
+        with db.engine.connect() as conn:
+            for sql in [
+                'ALTER TABLE trades RENAME COLUMN position_size TO stop_limit',
+                'ALTER TABLE users ADD COLUMN share_token VARCHAR(64) UNIQUE',
+            ]:
+                try:
+                    conn.execute(db.text(sql))
+                    conn.commit()
+                except Exception:
+                    pass
+
+_run_migrations()
+
+
 @app.before_request
 def initialize_db():
     # Runs once on first request, not at startup — avoids blocking gunicorn boot
@@ -43,6 +60,8 @@ def initialize_db():
             except Exception:
                 pass
         app._db_initialized = True
+
+
 
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
