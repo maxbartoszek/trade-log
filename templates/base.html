@@ -608,6 +608,12 @@
 
       /* Stats */
       .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .stats-row .stat-card:last-child:nth-child(odd) {
+        grid-column: 1 / -1;
+        max-width: 50%;
+        margin: 0 auto;
+        width: 100%;
+      }
       .stat-card { padding: 0.9rem 1rem; }
       .stat-value { font-size: 18px; }
 
