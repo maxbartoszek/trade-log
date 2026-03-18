@@ -40,34 +40,7 @@ Although free, Trade Log has enough storage to keep 250,000 logs across all acco
 | Hosting | Render |
 ---
 
-## Project structure
-
-```
-trade_journal/
-├── app.py
-├── instance             
-├── models.py               
-├── requirements.txt
-├── Procfile
-├── __pycache__
-├── README.md                
-├── render.yaml
-├── requirements.txt
-├── static/
-│   └── favicon.svg
-└── templates/
-    ├── add_trade.html
-    ├── analytics.html
-    ├── base.html
-    ├── dashboard.html       
-    ├── edit_trade.html     
-    ├── login.html
-    ├── register.html            
-    └── trade_detail.html   
-```
-
----
-## Running Locally (Recommended)
+## Running Locally 
 1. Clone the repo
 2. Install the necessary dependencies
  (install -r requirements.txt)
