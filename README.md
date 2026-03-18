@@ -47,8 +47,9 @@ Although free, Trade Log has enough storage to keep 250,000 logs across all acco
  (install -r requirements.txt)
 3. Start the app
  (python app.py)
+4. Hop on http://localhost:5000, register an account, and start logging trades.
 
-Visit http://localhost:5000, register an account, and start logging trades. Running locally uses SQLite automatically meaning there is no database setup needed.
+Running locally uses SQLite automatically meaning there is no database setup needed.
 
 ---
 
