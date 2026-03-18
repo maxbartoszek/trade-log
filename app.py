@@ -408,6 +408,11 @@ def login():
         flash('Invalid credentials.', 'error')
     return render_template('login.html')
 
+@app.route('/manifest.json')
+def manifest():
+    from flask import send_from_directory
+    return send_from_directory('static', 'manifest.json', mimetype='application/manifest+json')
+
 @app.route('/logout')
 @login_required
 def logout():
