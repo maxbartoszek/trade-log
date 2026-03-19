@@ -51,11 +51,19 @@
   </div>
   <div class="detail-cell">
     <div class="detail-cell-label">Stop Limit</div>
-    <div class="detail-cell-value">{{ '$%.0f' | format(trade.stop_limit) if trade.stop_limit else '—' }}</div>
+    <div class="detail-cell-value">{{ '$%.2f' | format(trade.stop_limit) if trade.stop_limit else '—' }}</div>
   </div>
   <div class="detail-cell">
     <div class="detail-cell-label">Sector</div>
     <div class="detail-cell-value">{{ trade.sector if trade.sector else '—' }}</div>
+  </div>
+  <div class="detail-cell">
+    <div class="detail-cell-label">Expected Exit Price</div>
+    <div class="detail-cell-value">{{ '$%.2f' | format(trade.expected_exit_price) if trade.expected_exit_price else '—' }}</div>
+  </div>
+  <div class="detail-cell">
+    <div class="detail-cell-label">Expected Timeframe</div>
+    <div class="detail-cell-value">{{ trade.expected_timeframe if trade.expected_timeframe else '—' }}</div>
   </div>
 </div>
 
