@@ -38,26 +38,26 @@
       --grid-line: rgba(0,229,160,0.015);
     }
 
-    /* Light mode */
+    /* Pink mode */
     html.light {
-      --bg: #f4f6fa;
-      --bg2: #ffffff;
-      --bg3: #eaecf4;
-      --border: #d4d9e8;
-      --border2: #bcc4d8;
-      --text: #1e2a45;
-      --text-dim: #4a5570;
-      --text-bright: #1a2040;
-      --accent: #00a870;
-      --accent-dim: rgba(0,168,112,0.10);
-      --accent-glow: rgba(0,168,112,0.22);
-      --red: #d93050;
-      --red-dim: rgba(217,48,80,0.10);
-      --yellow: #c49a00;
-      --yellow-dim: rgba(196,154,0,0.10);
-      --blue: #2878d6;
-      --nav-bg: rgba(244,246,250,0.94);
-      --grid-line: rgba(0,168,112,0.04);
+      --bg: #1a0a12;
+      --bg2: #241018;
+      --bg3: #2e1520;
+      --border: #3d1a28;
+      --border2: #52243a;
+      --text: #f0c8d8;
+      --text-dim: #a06080;
+      --text-bright: #ffe8f0;
+      --accent: #ff6eb0;
+      --accent-dim: rgba(255,110,176,0.15);
+      --accent-glow: rgba(255,110,176,0.3);
+      --red: #ff4466;
+      --red-dim: rgba(255,68,102,0.15);
+      --yellow: #ffb347;
+      --yellow-dim: rgba(255,179,71,0.15);
+      --blue: #c084fc;
+      --nav-bg: rgba(26,10,18,0.92);
+      --grid-line: rgba(255,110,176,0.04);
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -674,7 +674,7 @@
     <div style="display:flex;align-items:center;gap:1rem">
       <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle light/dark mode">
         <span class="toggle-option" id="toggle-dark">DARK</span>
-        <span class="toggle-option" id="toggle-light">LIGHT</span>
+        <span class="toggle-option" id="toggle-light">PINK</span>
       </button>
       <span class="nav-user">{{ current_user.username }}</span>
     </div>
