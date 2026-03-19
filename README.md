@@ -55,4 +55,4 @@ Running locally uses SQLite automatically meaning there is no database setup nee
 
 ## Acknowledgement
 
-Created using Claude. Specifically used in: frontend development, storing data, authorizing user profiles, and cleaning up a tremendous amount of code. Definitely would not have been able to do this project without it.
+Created using Claude. First wrote all code and the MVP in Python and Streamlit. Then began using Claude AI for developing a better frontend with HTML, storing data online in a Neon Tech database instead of SQLite, creating a user authentication system, cleaning up my code (optimizing efficiency of code, removing redundant comments, etc.), and creating the [Share Data] function. Definitely would not have been able to do this project without it.
