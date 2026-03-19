@@ -66,6 +66,20 @@ def initialize_db():
                 conn.commit()
             except Exception:
                 pass
+            try:
+                conn.execute(db.text(
+                    'ALTER TABLE trades ADD COLUMN expected_exit_price FLOAT'
+                ))
+                conn.commit()
+            except Exception:
+                pass
+            try:
+                conn.execute(db.text(
+                    'ALTER TABLE trades ADD COLUMN expected_timeframe VARCHAR(100)'
+                ))
+                conn.commit()
+            except Exception:
+                pass
             # Backfill share_token for existing users who don't have one
             try:
                 import secrets as _secrets
@@ -154,7 +168,6 @@ def add_trade():
         entry = float(f.get('entry_price', 0))
         exit_p = float(f.get('exit_price', 0)) if f.get('exit_price') else None
         pos = f.get('position_type', 'long')
-        status = f.get('status', 'open')
 
         return_pct = None
         if exit_p and entry:
@@ -163,6 +176,9 @@ def add_trade():
             else:
                 return_pct = round(((entry - exit_p) / entry) * 100, 2)
 
+        exit_date = datetime.strptime(f.get('exit_date'), '%Y-%m-%d').date() if f.get('exit_date') else None
+        status = 'closed' if (exit_p or exit_date) else 'open'
+
         trade = Trade(
             user_id=current_user.id,
             ticker=f.get('ticker', '').upper(),
@@ -170,8 +186,10 @@ def add_trade():
             entry_price=entry,
             exit_price=exit_p,
             stop_limit=float(f.get('stop_limit', 0)) if f.get('stop_limit') else None,
+            expected_exit_price=float(f.get('expected_exit_price')) if f.get('expected_exit_price') else None,
+            expected_timeframe=f.get('expected_timeframe', '') or None,
             entry_date=datetime.strptime(f.get('entry_date'), '%Y-%m-%d').date() if f.get('entry_date') else None,
-            exit_date=datetime.strptime(f.get('exit_date'), '%Y-%m-%d').date() if f.get('exit_date') else None,
+            exit_date=exit_date,
             return_pct=return_pct,
             status=status,
             sector=f.get('sector', ''),
@@ -216,7 +234,9 @@ def edit_trade(trade_id):
         trade.stop_limit = float(f.get('stop_limit', 0)) if f.get('stop_limit') else None
         trade.entry_date = datetime.strptime(f.get('entry_date'), '%Y-%m-%d').date() if f.get('entry_date') else None
         trade.exit_date = datetime.strptime(f.get('exit_date'), '%Y-%m-%d').date() if f.get('exit_date') else None
-        trade.status = f.get('status', 'open')
+        trade.expected_exit_price = float(f.get('expected_exit_price')) if f.get('expected_exit_price') else None
+        trade.expected_timeframe = f.get('expected_timeframe', '') or None
+        trade.status = 'closed' if (trade.exit_price or trade.exit_date) else 'open'
         trade.sector = f.get('sector', '')
         trade.strategy = f.get('strategy', '')
 

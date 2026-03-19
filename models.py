@@ -24,6 +24,8 @@ class Trade(db.Model):
     entry_price = db.Column(db.Float, nullable=False)
     exit_price = db.Column(db.Float)
     stop_limit = db.Column(db.Float)
+    expected_exit_price = db.Column(db.Float)
+    expected_timeframe = db.Column(db.String(100))
     entry_date = db.Column(db.Date)
     exit_date = db.Column(db.Date)
     return_pct = db.Column(db.Float)
